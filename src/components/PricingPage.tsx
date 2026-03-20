@@ -312,6 +312,43 @@ const PricingPage: React.FC = () => {
                       : (isZh ? '立即订阅' : 'Subscribe')}
                 </Button>
               </div>
+
+              {/* Top-Up Packs (only for paid plans) */}
+              {!plan.isFree && !plan.isEnterprise && (
+                <>
+                  <div className="h-px bg-border my-4" />
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    {isZh ? '加油包' : 'Top-Up Packs'}
+                  </h4>
+                  <div className="space-y-2">
+                    {topUpPacks.map((pack) => (
+                      <button
+                        key={pack.id}
+                        onClick={() => {
+                          const token = getToken();
+                          if (!token) {
+                            window.location.href = '/?logon=1';
+                          } else {
+                            window.open(`https://toolbox.photog.art/checkout?topup=${pack.id}`, '_blank');
+                          }
+                        }}
+                        className="w-full flex items-center justify-between py-2 px-3 rounded-lg border border-border text-sm hover:bg-foreground/[0.04] transition-colors duration-200"
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <Sparkles className="w-3 h-3 text-muted-foreground" />
+                          <span>{isZh ? pack.nameZh : pack.nameEn}</span>
+                          {pack.badgeZh && (
+                            <span className="text-[10px] text-primary">
+                              {isZh ? pack.badgeZh : pack.badgeEn}
+                            </span>
+                          )}
+                        </span>
+                        <span className="font-semibold tabular-nums">{pack.price}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
             );
           })}
