@@ -13,7 +13,7 @@ import FeatureQuotaTable, { PLAN_QUOTAS } from '@/components/pricing/FeatureQuot
 
 const FEATURES = [
   { id: 'brandInsight', zh: '品牌洞察', en: 'Brand Insight' },
-  { id: 'marketingPlan', zh: '策划方案', en: 'Marketing Plan' },
+  { id: 'strategyPlan', zh: '策划方案', en: 'Strategy Plan' },
   { id: 'imageGen', zh: '图片生成', en: 'Image Generation' },
   { id: 'videoGen', zh: '视频生成', en: 'Video Generation' },
   { id: 'viralMatch', zh: '爆款视频匹配', en: 'Viral Video Matching' },
