@@ -179,6 +179,7 @@ const PricingPage: React.FC = () => {
   const isMobile = useIsMobile();
   const isZh = language === 'zh';
   const planKeys = ['free', 'basic', 'pro', 'enterprise'] as const;
+  const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
 
   const handleSubscribe = (plan: PlanConfig) => {
     if (plan.isEnterprise) {
