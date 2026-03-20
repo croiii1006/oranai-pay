@@ -61,7 +61,7 @@ const plans: PlanConfig[] = [
     priceSubZh: '/ 月',
     priceSubEn: '/ month',
     credits: '400 Credit',
-    creditsNoteZh: '溢价约 17%',
+    creditsNoteZh: '',
     creditsNoteEn: '~17% premium',
   },
   {
@@ -74,7 +74,7 @@ const plans: PlanConfig[] = [
     priceSubZh: '/ 月',
     priceSubEn: '/ month',
     credits: '1600 Credit',
-    creditsNoteZh: '溢价约 16%',
+    creditsNoteZh: '',
     creditsNoteEn: '~16% premium',
     popular: true,
   },
