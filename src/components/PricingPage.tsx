@@ -296,17 +296,7 @@ const PricingPage: React.FC = () => {
                 highlightDiffFrom={compareQuota}
               />
 
-              <div className="h-px bg-border my-4" />
-
-              {/* Features */}
-              <ul className="space-y-1.5 mb-6 flex-1">
-                {FEATURES.map((f) => (
-                  <li key={f.id} className="flex items-center gap-2 text-sm">
-                    <Check className="w-3.5 h-3.5 text-foreground/60 shrink-0" />
-                    <span>{isZh ? f.zh : f.en}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex-1" />
 
               {/* CTA */}
               <div className="space-y-2">
