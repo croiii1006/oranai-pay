@@ -180,7 +180,7 @@ const PricingPage: React.FC = () => {
   const isZh = language === 'zh';
   const planKeys = ['free', 'basic', 'pro', 'enterprise'] as const;
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
-  const isSubscribed = true; // TODO: restore to !!getToken() after testing
+  const isSubscribed = !!getToken();
 
   const handleSubscribe = (plan: PlanConfig) => {
     if (plan.isEnterprise) {
