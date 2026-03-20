@@ -296,17 +296,7 @@ const PricingPage: React.FC = () => {
                 highlightDiffFrom={compareQuota}
               />
 
-              <div className="h-px bg-border my-4" />
-
-              {/* Features */}
-              <ul className="space-y-1.5 mb-6 flex-1">
-                {FEATURES.map((f) => (
-                  <li key={f.id} className="flex items-center gap-2 text-sm">
-                    <Check className="w-3.5 h-3.5 text-foreground/60 shrink-0" />
-                    <span>{isZh ? f.zh : f.en}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex-1" />
 
               {/* CTA */}
               <div className="space-y-2">
@@ -383,33 +373,30 @@ const PricingPage: React.FC = () => {
           </h2>
 
           {isMobile ? (
-            <Accordion type="multiple" className="space-y-3">
-              <AccordionItem value="features" className="border border-border rounded-xl overflow-hidden">
-                <AccordionTrigger className="px-4 text-base font-medium">
-                  {isZh ? '功能列表' : 'Features'}
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  {FEATURES.map((f) => (
-                    <div key={f.id} className="mb-3 last:mb-0">
-                      <h4 className="text-sm font-medium mb-2">{isZh ? f.zh : f.en}</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {planKeys.map((key) => (
-                          <div key={key} className="text-xs p-2 rounded-lg border border-border">
-                            <div className="font-medium text-muted-foreground mb-0.5 capitalize">
-                              {plans.find(p => p.id === key)?.[isZh ? 'nameZh' : 'nameEn']}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Check className="w-3 h-3 text-foreground/60" />
-                              <span>{isZh ? '可用' : 'Included'}</span>
-                            </div>
+            <div className="space-y-3">
+              {FEATURES.map((f) => (
+                <div key={f.id} className="border border-border rounded-xl p-4">
+                  <h4 className="text-sm font-medium mb-2">{isZh ? f.zh : f.en}</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {planKeys.map((key) => {
+                      const quota = PLAN_QUOTAS[key];
+                      const featureKey = f.id as keyof import('@/components/pricing/FeatureQuotaTable').FeatureQuota;
+                      const val = key === 'enterprise' ? -1 : (quota?.[featureKey] ?? 0);
+                      return (
+                        <div key={key} className="text-xs p-2 rounded-lg border border-border">
+                          <div className="font-medium text-muted-foreground mb-0.5">
+                            {plans.find(p => p.id === key)?.[isZh ? 'nameZh' : 'nameEn']}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                          <span className={`font-semibold tabular-nums ${val === -1 ? 'text-primary' : val === 0 ? 'text-muted-foreground/40' : 'text-foreground'}`}>
+                            {val === -1 ? (isZh ? '不限' : '∞') : val}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-border">
               <table className="w-full text-sm">
@@ -426,18 +413,25 @@ const PricingPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {FEATURES.map((f) => (
-                    <tr key={f.id} className="border-b border-border">
-                      <td className="p-4 font-medium">{isZh ? f.zh : f.en}</td>
-                      {planKeys.map((key) => (
-                        <td key={key} className="p-4 text-center">
-                          <div className="flex items-center justify-center gap-1 text-foreground/70">
-                            <Check className="w-4 h-4" />
-                          </div>
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
+                  {FEATURES.map((f) => {
+                    const featureKey = f.id as keyof import('@/components/pricing/FeatureQuotaTable').FeatureQuota;
+                    return (
+                      <tr key={f.id} className="border-b border-border last:border-b-0">
+                        <td className="p-4 font-medium">{isZh ? f.zh : f.en}</td>
+                        {planKeys.map((key) => {
+                          const quota = PLAN_QUOTAS[key];
+                          const val = key === 'enterprise' ? -1 : (quota?.[featureKey] ?? 0);
+                          return (
+                            <td key={key} className="p-4 text-center">
+                              <span className={`font-semibold tabular-nums ${val === -1 ? 'text-primary' : val === 0 ? 'text-muted-foreground/40' : 'text-foreground'}`}>
+                                {val === -1 ? (isZh ? '不限' : '∞') : val}
+                              </span>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
