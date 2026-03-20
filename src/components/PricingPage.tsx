@@ -354,54 +354,7 @@ const PricingPage: React.FC = () => {
           })}
         </section>
 
-        {/* ========== C) Top-Up Packs ========== */}
-        <section className="max-w-4xl mx-auto mb-20">
-          <h2 className="heading-md text-center mb-3">
-            {isZh ? '按量充值加油包' : 'Pay-as-you-go Top-Up'}
-          </h2>
-          <p className="text-sm text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
-            {isZh
-              ? '当月套餐积分耗尽？随时充值，单次支付，不绑定代扣。'
-              : 'Need more credits? One-off payment, no recurring billing.'}
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {topUpPacks.map((pack) => (
-              <div
-                key={pack.id}
-                className="relative rounded-2xl border border-border bg-card p-6 text-center transition-all duration-300 hover-lift"
-              >
-                {pack.badgeZh && (
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary whitespace-nowrap">
-                    {isZh ? pack.badgeZh : pack.badgeEn}
-                  </div>
-                )}
-                <h3 className="text-base font-semibold mb-2">
-                  {isZh ? pack.nameZh : pack.nameEn}
-                </h3>
-                <div className="text-3xl font-bold mb-1">{pack.price}</div>
-                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-                  <Sparkles className="w-4 h-4" />
-                  <span>{pack.credits}</span>
-                </div>
-                <Button
-                  variant="outline"
-                  className="w-full rounded-full mt-5"
-                  onClick={() => {
-                    const token = getToken();
-                    if (!token) {
-                      window.location.href = '/?logon=1';
-                    } else {
-                      window.open(`https://toolbox.photog.art/checkout?topup=${pack.id}`, '_blank');
-                    }
-                  }}
-                >
-                  {isZh ? '立即充值' : 'Buy Now'}
-                </Button>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Top-Up section removed — packs are now inside each paid plan card */}
 
         {/* ========== D) Comparison Table ========== */}
         <section className="max-w-5xl mx-auto mb-20">
