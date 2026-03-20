@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Check, Zap, Mail, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { getToken } from '@/lib/utils/auth-storage';
+import FeatureQuotaTable, { PLAN_QUOTAS } from '@/components/pricing/FeatureQuotaTable';
 
 /* ================================================================
    DATA CONFIG
@@ -178,6 +179,7 @@ const PricingPage: React.FC = () => {
   const isMobile = useIsMobile();
   const isZh = language === 'zh';
   const planKeys = ['free', 'basic', 'pro', 'enterprise'] as const;
+  const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
 
   const handleSubscribe = (plan: PlanConfig) => {
     if (plan.isEnterprise) {
@@ -216,9 +218,21 @@ const PricingPage: React.FC = () => {
 
         {/* ========== B) Plan Cards ========== */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20">
-          {plans.map((plan) => (
+          {plans.map((plan) => {
+            // Determine comparison quota for hover highlight
+            const compareQuota = hoveredPlan && hoveredPlan !== plan.id
+              ? null
+              : hoveredPlan === plan.id && plan.id === 'pro'
+                ? PLAN_QUOTAS['basic']
+                : hoveredPlan === plan.id && plan.id === 'basic'
+                  ? PLAN_QUOTAS['free']
+                  : null;
+
+            return (
             <div
               key={plan.id}
+              onMouseEnter={() => setHoveredPlan(plan.id)}
+              onMouseLeave={() => setHoveredPlan(null)}
               className={`relative rounded-2xl border p-6 flex flex-col transition-all duration-300 hover-lift ${
                 plan.popular
                   ? 'border-foreground/30 bg-foreground/5 shadow-lg'
@@ -240,7 +254,7 @@ const PricingPage: React.FC = () => {
 
               {/* Price */}
               {!plan.isEnterprise ? (
-                <div className="mb-4">
+                <div className="mb-2">
                   <span className="text-3xl font-bold">{plan.price}</span>
                   {plan.priceSubZh && (
                     <span className="text-sm text-muted-foreground ml-1">
@@ -249,29 +263,38 @@ const PricingPage: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <div className="mb-4">
+                <div className="mb-2">
                   <span className="text-3xl font-bold">{isZh ? '定制' : 'Custom'}</span>
                 </div>
               )}
 
-              {/* Credits */}
+              {/* Credits (subdued) */}
               {!plan.isEnterprise && (
-                <div className="flex items-center gap-1.5 text-sm mb-1">
-                  <Zap className="w-4 h-4 text-foreground/70" />
-                  <span className="font-medium">{plan.credits}</span>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Zap className="w-3 h-3" />
+                  <span>{plan.credits}</span>
                   {plan.creditsNoteZh && (
-                    <span className="text-xs text-muted-foreground ml-1">
+                    <span className="ml-0.5">
                       ({isZh ? plan.creditsNoteZh : plan.creditsNoteEn})
                     </span>
                   )}
                 </div>
               )}
               {plan.isEnterprise && (
-                <div className="flex items-center gap-1.5 text-sm mb-1">
-                  <Zap className="w-4 h-4 text-foreground/70" />
-                  <span className="font-medium">{isZh ? '定制额度' : 'Custom Credits'}</span>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Zap className="w-3 h-3" />
+                  <span>{isZh ? '定制额度' : 'Custom Credits'}</span>
                 </div>
               )}
+
+              <div className="h-px bg-border my-4" />
+
+              {/* ⭐ What you can generate */}
+              <FeatureQuotaTable
+                planId={plan.id}
+                isEnterprise={plan.isEnterprise}
+                highlightDiffFrom={compareQuota}
+              />
 
               <div className="h-px bg-border my-4" />
 
@@ -300,7 +323,8 @@ const PricingPage: React.FC = () => {
                 </Button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </section>
 
         {/* ========== C) Top-Up Packs ========== */}
