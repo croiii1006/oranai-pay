@@ -9,7 +9,7 @@ import { IPDetectionProvider } from "@/contexts/IPDetectionContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { logger } from "@/lib/logger";
 import { useEffect, useRef } from "react";
-import { getToken, clearAuth, saveUserInfo } from "@/lib/utils/auth-storage";
+import { getToken, clearAuth, saveUserInfo, isAuthBypassEnabled, getAuthBypassUser } from "@/lib/utils/auth-storage";
 import { getUserInfo } from "@/lib/api/auth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -60,6 +60,12 @@ const App = () => {
 
     const initializeAuth = async () => {
       const token = getToken();
+      const authBypass = isAuthBypassEnabled();
+
+      if (authBypass) {
+        saveUserInfo(getAuthBypassUser());
+        return;
+      }
       
       if (token) {
         // 如果有 token，尝试获取用户信息（token 通过 Authorization 头传递）

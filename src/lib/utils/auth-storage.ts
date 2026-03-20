@@ -1,6 +1,6 @@
-/**
- * 认证相关的存储工具
- * 管理 token 和用户信息的存储
+﻿/**
+ * 璁よ瘉鐩稿叧鐨勫瓨鍌ㄥ伐鍏?
+ * 绠＄悊 token 鍜岀敤鎴蜂俊鎭殑瀛樺偍
  */
 
 import { storage } from './storage';
@@ -8,13 +8,42 @@ import { STORAGE_KEYS } from '../constants';
 import type { UserInfo } from '../api/auth';
 import { setCookie, getCookie, removeCookie } from './cookies';
 
+const AUTH_BYPASS_ENABLED = import.meta.env.VITE_AUTH_BYPASS === 'true';
+const AUTH_BYPASS_TOKEN = 'dev-auth-bypass-token';
+const AUTH_BYPASS_USER: UserInfo = {
+  id: 1,
+  username: 'dev_user',
+  nickname: 'Dev User',
+  gender: 0,
+  email: 'dev@oran.ai',
+  phone: '',
+  avatar: '',
+  description: 'Local dev auth bypass',
+  pwdResetTime: '',
+  pwdExpired: false,
+  registrationDate: '',
+  deptId: 0,
+  deptName: 'Dev',
+  permissions: [],
+  roles: [],
+  roleNames: '',
+};
+
+export function isAuthBypassEnabled(): boolean {
+  return AUTH_BYPASS_ENABLED;
+}
+
+export function getAuthBypassUser(): UserInfo {
+  return AUTH_BYPASS_USER;
+}
+
 /**
- * 保存认证 token（使用 cookies 存储，支持同域名和子域名）
+ * 淇濆瓨璁よ瘉 token锛堜娇鐢?cookies 瀛樺偍锛屾敮鎸佸悓鍩熷悕鍜屽瓙鍩熷悕锛?
  */
 export function saveToken(token: string): boolean {
   try {
-    setCookie(STORAGE_KEYS.AUTH_TOKEN, token, 30); // 30 天过期
-    // 同时保存到 localStorage 作为备用（向后兼容）
+    setCookie(STORAGE_KEYS.AUTH_TOKEN, token, 30); // 30 澶╄繃鏈?
+    // 鍚屾椂淇濆瓨鍒?localStorage 浣滀负澶囩敤锛堝悜鍚庡吋瀹癸級
     storage.set(STORAGE_KEYS.AUTH_TOKEN, token);
     return true;
   } catch (error) {
@@ -24,20 +53,23 @@ export function saveToken(token: string): boolean {
 }
 
 /**
- * 获取认证 token（优先从 cookies 读取，如果没有则从 localStorage 读取）
+ * 鑾峰彇璁よ瘉 token锛堜紭鍏堜粠 cookies 璇诲彇锛屽鏋滄病鏈夊垯浠?localStorage 璇诲彇锛?
  */
 export function getToken(): string | null {
-  // 优先从 cookies 读取
+  if (AUTH_BYPASS_ENABLED) {
+    return AUTH_BYPASS_TOKEN;
+  }
+  // 浼樺厛浠?cookies 璇诲彇
   const cookieToken = getCookie(STORAGE_KEYS.AUTH_TOKEN);
   if (cookieToken) {
     return cookieToken;
   }
-  // 如果没有，从 localStorage 读取（向后兼容）
+  // 濡傛灉娌℃湁锛屼粠 localStorage 璇诲彇锛堝悜鍚庡吋瀹癸級
   return storage.get<string>(STORAGE_KEYS.AUTH_TOKEN);
 }
 
 /**
- * 删除认证 token（同时删除 cookies 和 localStorage）
+ * 鍒犻櫎璁よ瘉 token锛堝悓鏃跺垹闄?cookies 鍜?localStorage锛?
  */
 export function removeToken(): boolean {
   try {
@@ -51,58 +83,64 @@ export function removeToken(): boolean {
 }
 
 /**
- * 保存用户信息
+ * 淇濆瓨鐢ㄦ埛淇℃伅
  */
 export function saveUserInfo(userInfo: UserInfo): boolean {
   return storage.set(STORAGE_KEYS.USER_INFO, userInfo);
 }
 
 /**
- * 获取用户信息
+ * 鑾峰彇鐢ㄦ埛淇℃伅
  */
 export function getUserInfo(): UserInfo | null {
+  if (AUTH_BYPASS_ENABLED) {
+    return AUTH_BYPASS_USER;
+  }
   return storage.get<UserInfo>(STORAGE_KEYS.USER_INFO);
 }
 
 /**
- * 删除用户信息
+ * 鍒犻櫎鐢ㄦ埛淇℃伅
  */
 export function removeUserInfo(): boolean {
   return storage.remove(STORAGE_KEYS.USER_INFO);
 }
 
 /**
- * 保存 OAuth code
+ * 淇濆瓨 OAuth code
  */
 export function saveOAuthCode(code: string): boolean {
   return storage.set(STORAGE_KEYS.OAUTH_CODE, code);
 }
 
 /**
- * 获取 OAuth code
+ * 鑾峰彇 OAuth code
  */
 export function getOAuthCode(): string | null {
   return storage.get<string>(STORAGE_KEYS.OAUTH_CODE);
 }
 
 /**
- * 删除 OAuth code
+ * 鍒犻櫎 OAuth code
  */
 export function removeOAuthCode(): boolean {
   return storage.remove(STORAGE_KEYS.OAUTH_CODE);
 }
 
 /**
- * 清除所有认证相关数据
+ * 娓呴櫎鎵€鏈夎璇佺浉鍏虫暟鎹?
  */
 export function clearAuth(): void {
+  if (AUTH_BYPASS_ENABLED) {
+    return;
+  }
   removeToken();
   removeUserInfo();
   removeOAuthCode();
 }
 
 /**
- * 检查是否已登录
+ * 妫€鏌ユ槸鍚﹀凡鐧诲綍
  */
 export function isAuthenticated(): boolean {
   return getToken() !== null;
