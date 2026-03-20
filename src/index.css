@@ -1,0 +1,459 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OranAI Design System - High-end minimal black & white */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 5%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 5%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
+
+    --radius: 0.75rem;
+
+    /* Custom OranAI tokens */
+    --glass: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 100% / 0.2;
+    --glow: 0 0% 100%;
+    --gradient-start: 0 0% 8%;
+    --gradient-end: 0 0% 3%;
+    --noise-opacity: 0.03;
+  }
+
+  .dark {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 83%;
+
+    /* Custom OranAI tokens - dark */
+    --glass: 0 0% 8% / 0.6;
+    --glass-border: 0 0% 100% / 0.08;
+    --glow: 0 0% 100%;
+    --gradient-start: 0 0% 6%;
+    --gradient-end: 0 0% 2%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  @font-face {
+    font-family: 'Zalando Sans Expanded';
+    src: url('/fonts/zalando-sans-expanded.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Urbanist';
+    src: url('/fonts/urbanist-variable.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* 固定滚动条占位，避免视口宽度变化导致页面左右抖动 */
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable both-edges;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none; /* IE/Edge hide scrollbar */
+    scrollbar-width: none; /* Firefox hide scrollbar */
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased font-light;
+  }
+
+  /* Hide scrollbars globally but keep scrollable behavior */
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  /* Theme transition */
+  html,
+  html *,
+  html *::before,
+  html *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  /* Homepage hero gradient */
+  .hero-gradient {
+    background: linear-gradient(to bottom, #ffffff, #999999);
+  }
+
+  .dark .hero-gradient {
+    background: linear-gradient(to bottom, #000000, #454545);
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply backdrop-blur-xl border;
+    background: hsl(var(--glass));
+    border-color: hsl(var(--glass-border));
+  }
+
+  .glass-strong {
+    @apply backdrop-blur-2xl border;
+    background: hsl(0 0% 8% / 0.85);
+    border-color: hsl(var(--glass-border));
+  }
+
+  /* Liquid Glass Tab Effect */
+  .glass-tab {
+    @apply relative overflow-hidden backdrop-blur-md border transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--foreground) / 0.05) 0%, hsl(var(--foreground) / 0.02) 100%);
+    border-color: hsl(var(--foreground) / 0.1);
+    box-shadow: 
+      inset 0 1px 1px hsl(var(--foreground) / 0.06),
+      0 2px 8px -2px hsl(var(--background) / 0.3);
+  }
+
+  .glass-tab::before {
+    content: "";
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--foreground) / 0.15) 0%,
+      transparent 50%,
+      transparent 100%
+    );
+  }
+
+  .glass-tab::after {
+    content: "";
+    @apply absolute top-0 left-0 right-0 h-[1px] opacity-30;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.5) 50%, transparent 100%);
+  }
+
+  .glass-tab:hover {
+    background: linear-gradient(135deg, hsl(var(--foreground) / 0.1) 0%, hsl(var(--foreground) / 0.04) 100%);
+    border-color: hsl(var(--foreground) / 0.2);
+    box-shadow: 
+      inset 0 1px 2px hsl(var(--foreground) / 0.1),
+      0 4px 16px -4px hsl(var(--background) / 0.4);
+    transform: translateY(-1px);
+  }
+
+  .glass-tab:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Active Glass Tab */
+  .glass-tab-active {
+    @apply relative overflow-hidden backdrop-blur-md border;
+    background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.9) 100%);
+    border-color: hsl(var(--foreground) / 0.3);
+    color: hsl(var(--background));
+    box-shadow: 
+      inset 0 1px 2px hsl(var(--background) / 0.15),
+      0 4px 20px -4px hsl(var(--foreground) / 0.3);
+  }
+
+  .glass-tab-active::before {
+    content: "";
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background) / 0.2) 0%,
+      transparent 40%,
+      transparent 100%
+    );
+  }
+
+  .glass-tab-active::after {
+    content: "";
+    @apply absolute top-0 left-0 right-0 h-[1px] opacity-50;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--background) / 0.6) 50%, transparent 100%);
+  }
+
+  /* Glow effects */
+  .glow {
+    box-shadow: 0 0 60px -15px hsl(var(--glow) / 0.15);
+  }
+
+  .glow-sm {
+    box-shadow: 0 0 30px -10px hsl(var(--glow) / 0.1);
+  }
+
+  .glow-hover:hover {
+    box-shadow: 0 0 40px -10px hsl(var(--glow) / 0.2);
+  }
+
+  /* Gradient background */
+  .gradient-bg {
+    background: linear-gradient(180deg, hsl(var(--gradient-start)) 0%, hsl(var(--gradient-end)) 100%);
+  }
+
+  /* Noise texture overlay */
+  .noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* Animated gradient */
+  .animated-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(0 0% 5%) 0%,
+      hsl(0 0% 10%) 25%,
+      hsl(0 0% 5%) 50%,
+      hsl(0 0% 8%) 75%,
+      hsl(0 0% 5%) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Typography */
+  .heading-xl {
+    @apply text-3xl md:text-4xl lg:text-7xl font-light tracking-tight leading-none;
+  }
+
+  .heading-lg {
+    @apply text-3xl md:text-5xl font-light tracking-tight;
+  }
+
+  .heading-md {
+    @apply text-2xl md:text-3xl font-light tracking-tight;
+  }
+
+  .body-lg {
+    @apply text-lg md:text-xl text-muted-foreground font-light leading-relaxed;
+  }
+
+  /* Hover transitions */
+  .hover-lift {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-1;
+  }
+
+  /* Blur hover */
+  .blur-hover {
+    @apply transition-all duration-300;
+  }
+
+  .blur-hover:hover {
+    filter: brightness(1.1);
+  }
+
+  /* Link underline animation */
+  .link-underline {
+    @apply relative;
+  }
+
+  .link-underline::after {
+    content: "";
+    @apply absolute bottom-0 left-0 w-0 h-px bg-foreground transition-all duration-300;
+  }
+
+  .link-underline:hover::after {
+    @apply w-full;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Mac 风格滚动条 - 细边黑色圆角 */
+  /* 全局滚动条样式 - 应用到所有可滚动元素 */
+  * {
+    scrollbar-width: thin; /* Firefox - 细滚动条 */
+    scrollbar-color: rgba(0, 0, 0, 0.35) transparent; /* Firefox - 滚动条颜色和轨道 */
+  }
+
+  /* Webkit 浏览器（Chrome, Safari, Edge）滚动条样式 */
+  *::-webkit-scrollbar {
+    width: 11px; /* 垂直滚动条宽度 - Mac 标准宽度 */
+    height: 11px; /* 水平滚动条高度 */
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent; /* 轨道背景透明 */
+    border-radius: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.35); /* 滚动条颜色 - 半透明黑色 */
+    border-radius: 10px; /* 圆角 */
+    border: 2px solid transparent; /* 边框透明，用于创建细边效果 */
+    background-clip: padding-box; /* 确保背景不延伸到边框 */
+    transition: background-color 0.2s ease; /* 平滑过渡 */
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5); /* hover 时变深 */
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background: rgba(0, 0, 0, 0.65); /* 点击时更深 */
+  }
+
+  /* 暗色主题滚动条 */
+  .dark * {
+    scrollbar-color: rgba(255, 255, 255, 0.35) transparent; /* Firefox - 暗色主题 */
+  }
+
+  .dark *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.35); /* 暗色主题 - 半透明白色 */
+  }
+
+  .dark *::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5); /* hover 时变亮 */
+  }
+
+  .dark *::-webkit-scrollbar-thumb:active {
+    background: rgba(255, 255, 255, 0.65); /* 点击时更亮 */
+  }
+
+  /* 隐藏滚动条但保持滚动功能（用于特殊场景） */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+
+  /* 音频播放动画 */
+  @keyframes audio-pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes audio-ripple {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  .audio-playing {
+    animation: audio-pulse 1.5s ease-in-out infinite;
+  }
+
+  .audio-ripple {
+    animation: audio-ripple 1.5s ease-out infinite;
+  }
+
+  /* 瀑布流布局 */
+  .masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 28px;
+    padding: 20px;
+    width: 100%;
+    align-items: start;
+  }
+
+  @media (max-width: 640px) {
+    .masonry-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 16px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 32px;
+      padding: 24px;
+    }
+  }
+}
