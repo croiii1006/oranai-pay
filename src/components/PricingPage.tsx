@@ -180,6 +180,7 @@ const PricingPage: React.FC = () => {
   const isZh = language === 'zh';
   const planKeys = ['free', 'basic', 'pro', 'enterprise'] as const;
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
+  const isSubscribed = !!getToken();
 
   const handleSubscribe = (plan: PlanConfig) => {
     if (plan.isEnterprise) {
@@ -314,7 +315,7 @@ const PricingPage: React.FC = () => {
               </div>
 
               {/* Top-Up Packs (only for paid plans) */}
-              {!plan.isFree && !plan.isEnterprise && (
+              {isSubscribed && !plan.isFree && !plan.isEnterprise && (
                 <>
                   <div className="h-px bg-border my-4" />
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
