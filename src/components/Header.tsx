@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Globe, Sun, Moon, LogOut, Eye, EyeOff } from "lucide-react";
-import CreditPill from "@/components/CreditPill";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import {
   Tooltip,
   TooltipContent,
@@ -31,10 +29,12 @@ import {
   getToken,
 } from "@/lib/utils/auth-storage";
 import type { UserInfo } from "@/lib/api/auth";
+import type { PlanId } from "@/lib/pricing";
 
 interface HeaderProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  currentPlanId: PlanId;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   isVisible?: boolean;
@@ -48,9 +48,17 @@ interface UserData {
   avatar?: string;
 }
 
+const planLabels: Record<PlanId, { zh: string; en: string }> = {
+  free: { zh: "免费版", en: "Free" },
+  basic: { zh: "基础版", en: "Basic" },
+  pro: { zh: "专业版", en: "Pro" },
+  enterprise: { zh: "企业版", en: "Enterprise" },
+};
+
 const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
+  currentPlanId,
   sidebarOpen,
   setSidebarOpen,
   isVisible = true,
@@ -161,7 +169,6 @@ const Header: React.FC<HeaderProps> = ({
     { id: "solution", label: t("nav.solution") },
     { id: "models", label: t("nav.models") },
     { id: "products", label: t("nav.products") },
-    { id: "pricing", label: t("nav.pricing") },
     { id: "library", label: t("nav.library") },
   ];
 
@@ -551,6 +558,13 @@ const Header: React.FC<HeaderProps> = ({
     return name.slice(0, 1).toUpperCase();
   };
 
+  const isZh = language === "zh";
+  const currentPlanLabel = planLabels[currentPlanId][isZh ? "zh" : "en"];
+  const handlePlanMenuClick = () => {
+    setActiveTab("pricing");
+  };
+
+
   return (
     <>
     <header
@@ -637,11 +651,7 @@ const Header: React.FC<HeaderProps> = ({
             </div>
             {/* Right - Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <CreditPill
-                onUpgradeClick={() => setActiveTab('pricing')}
-                onUsageClick={() => setActiveTab('usage')}
-              />
-            <button
+              <button
                 onClick={toggleTheme}
                 className="flex items-center justify-center p-2 rounded-lg text-foreground/70 hover:text-foreground transition-colors duration-200"
                 aria-label="Toggle theme"
@@ -657,9 +667,12 @@ const Header: React.FC<HeaderProps> = ({
               </button>
 
               {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="focus:outline-none">
+                <HoverCard openDelay={80} closeDelay={140}>
+                  <HoverCardTrigger asChild>
+                    <button
+                      className="focus:outline-none"
+                      aria-label={isZh ? "账户菜单" : "Account menu"}
+                    >
                       <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
                         {user.avatar && <AvatarImage src={user.avatar} alt={user.nickname || user.username} />}
                         <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
@@ -667,21 +680,44 @@ const Header: React.FC<HeaderProps> = ({
                         </AvatarFallback>
                       </Avatar>
                     </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-48 backdrop-blur-md bg-background/80 dark:bg-background/60 border border-border/40"
+                  </HoverCardTrigger>
+                  <HoverCardContent
+                    align="center"
+                    sideOffset={6}
+                    className="w-72 rounded-2xl border border-border/30 bg-background/50 p-2.5 shadow-[0_25px_80px_-40px_rgba(0,0,0,0.65)] ring-1 ring-white/10 backdrop-blur dark:ring-white/10"
                   >
-                    <div className="px-2 py-1.5 text-sm font-medium text-foreground">
-                      {user.nickname || user.username}
+                    <div className="flex flex-col items-center gap-2 px-2 py-4 text-center">
+                      <div className="min-w-0 text-large font-medium text-foreground">
+                        {user.nickname || user.username}
+                      </div>
+                      <div className="pb-3 text-xs text-muted-foreground">{user.email}</div>
+                      <div className="mt-1 flex flex-col items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={handlePlanMenuClick}
+                          className="inline-flex min-w-[60px] shrink-0 items-center justify-center rounded-full border border-border/40 bg-muted px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:border-foreground/30 hover:bg-foreground/12 hover:shadow-[0_8px_24px_-16px_rgba(15,23,42,0.5)]"
+                        >
+                          <span>{currentPlanLabel}</span>
+                        </button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={handleSignOut}
+                              aria-label={language === "en" ? "Sign Out" : "退出登录"}
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[rgb(234_88_12/1)] transition-colors hover:bg-transparent hover:text-[rgb(249_115_22/1)]"
+                            >
+                              <LogOut className="h-4 w-4" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom">
+                            {language === "en" ? "Sign Out" : "退出登录"}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
-                    <div className="px-2 pb-2 text-xs text-muted-foreground">{user.email}</div>
-                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
-                      <LogOut className="w-4 h-4 mr-2" />
-                      {language === "en" ? "Sign Out" : "退出登录"}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </HoverCardContent>
+                </HoverCard>
               ) : (
                 <button
                   onClick={openSignIn}

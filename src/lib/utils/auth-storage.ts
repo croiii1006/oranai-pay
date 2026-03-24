@@ -1,6 +1,6 @@
-﻿/**
- * 璁よ瘉鐩稿叧鐨勫瓨鍌ㄥ伐鍏?
- * 绠＄悊 token 鍜岀敤鎴蜂俊鎭殑瀛樺偍
+/**
+ * 认证相关的存储工具
+ * 管理 token 和用户信息的存储
  */
 
 import { storage } from './storage';
@@ -38,12 +38,12 @@ export function getAuthBypassUser(): UserInfo {
 }
 
 /**
- * 淇濆瓨璁よ瘉 token锛堜娇鐢?cookies 瀛樺偍锛屾敮鎸佸悓鍩熷悕鍜屽瓙鍩熷悕锛?
+ * 保存认证 token（使用 cookies 存储，支持同域名和子域名）
  */
 export function saveToken(token: string): boolean {
   try {
-    setCookie(STORAGE_KEYS.AUTH_TOKEN, token, 30); // 30 澶╄繃鏈?
-    // 鍚屾椂淇濆瓨鍒?localStorage 浣滀负澶囩敤锛堝悜鍚庡吋瀹癸級
+    setCookie(STORAGE_KEYS.AUTH_TOKEN, token, 30); // 30 天过期
+    // 同时保存到 localStorage 作为备用（向后兼容）
     storage.set(STORAGE_KEYS.AUTH_TOKEN, token);
     return true;
   } catch (error) {
@@ -53,23 +53,23 @@ export function saveToken(token: string): boolean {
 }
 
 /**
- * 鑾峰彇璁よ瘉 token锛堜紭鍏堜粠 cookies 璇诲彇锛屽鏋滄病鏈夊垯浠?localStorage 璇诲彇锛?
+ * 获取认证 token（优先从 cookies 读取，如果没有则从 localStorage 读取）
  */
 export function getToken(): string | null {
   if (AUTH_BYPASS_ENABLED) {
     return AUTH_BYPASS_TOKEN;
   }
-  // 浼樺厛浠?cookies 璇诲彇
+  // 优先从 cookies 读取
   const cookieToken = getCookie(STORAGE_KEYS.AUTH_TOKEN);
   if (cookieToken) {
     return cookieToken;
   }
-  // 濡傛灉娌℃湁锛屼粠 localStorage 璇诲彇锛堝悜鍚庡吋瀹癸級
+  // 如果没有，从 localStorage 读取（向后兼容）
   return storage.get<string>(STORAGE_KEYS.AUTH_TOKEN);
 }
 
 /**
- * 鍒犻櫎璁よ瘉 token锛堝悓鏃跺垹闄?cookies 鍜?localStorage锛?
+ * 删除认证 token（同时删除 cookies 和 localStorage）
  */
 export function removeToken(): boolean {
   try {
@@ -83,14 +83,14 @@ export function removeToken(): boolean {
 }
 
 /**
- * 淇濆瓨鐢ㄦ埛淇℃伅
+ * 保存用户信息
  */
 export function saveUserInfo(userInfo: UserInfo): boolean {
   return storage.set(STORAGE_KEYS.USER_INFO, userInfo);
 }
 
 /**
- * 鑾峰彇鐢ㄦ埛淇℃伅
+ * 获取用户信息
  */
 export function getUserInfo(): UserInfo | null {
   if (AUTH_BYPASS_ENABLED) {
@@ -100,35 +100,35 @@ export function getUserInfo(): UserInfo | null {
 }
 
 /**
- * 鍒犻櫎鐢ㄦ埛淇℃伅
+ * 删除用户信息
  */
 export function removeUserInfo(): boolean {
   return storage.remove(STORAGE_KEYS.USER_INFO);
 }
 
 /**
- * 淇濆瓨 OAuth code
+ * 保存 OAuth code
  */
 export function saveOAuthCode(code: string): boolean {
   return storage.set(STORAGE_KEYS.OAUTH_CODE, code);
 }
 
 /**
- * 鑾峰彇 OAuth code
+ * 获取 OAuth code
  */
 export function getOAuthCode(): string | null {
   return storage.get<string>(STORAGE_KEYS.OAUTH_CODE);
 }
 
 /**
- * 鍒犻櫎 OAuth code
+ * 删除 OAuth code
  */
 export function removeOAuthCode(): boolean {
   return storage.remove(STORAGE_KEYS.OAUTH_CODE);
 }
 
 /**
- * 娓呴櫎鎵€鏈夎璇佺浉鍏虫暟鎹?
+ * 清除所有认证相关数据
  */
 export function clearAuth(): void {
   if (AUTH_BYPASS_ENABLED) {
@@ -140,7 +140,7 @@ export function clearAuth(): void {
 }
 
 /**
- * 妫€鏌ユ槸鍚﹀凡鐧诲綍
+ * 检查是否已登录
  */
 export function isAuthenticated(): boolean {
   return getToken() !== null;

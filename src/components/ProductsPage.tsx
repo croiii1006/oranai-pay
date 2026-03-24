@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { ArrowUp, Globe, Sparkles, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -91,12 +91,12 @@ const ProductsPage: React.FC = () => {
       id: 'imageGen',
       labelKey: 'products.imageGen',
       image: imageGenThumb,
-      url: undefined // 鍔ㄦ€佽幏鍙栵紝涓嶅湪杩欓噷璁剧疆
+      url: undefined // 动态获取，不在这里设置
     }, {
       id: 'videoGen',
       labelKey: 'products.videoGen',
       image: videoGenThumb,
-      url: undefined // 鍔ㄦ€佽幏鍙栵紝浣跨敤 OAuth2 鎺堟潈
+      url: undefined // 动态获取，使用 OAuth2 授权
     }, {
       id: 'digitalHuman',
       labelKey: 'products.digitalHuman',
@@ -132,8 +132,8 @@ const ProductsPage: React.FC = () => {
   }, [currentTabConfig, activeSubTab]);
 
   /**
-   * 澶勭悊宸ュ叿璺宠浆
-   * @param subTabId 瀛愭爣绛?ID锛堝 'imageGen', 'videoGen'锛?
+   * 处理工具跳转
+   * @param subTabId 子标签 ID（如 'imageGen', 'videoGen'）
    */
   const handleToolNavigation = (subTabId: string) => {
     let targetUrl: string;
@@ -146,7 +146,7 @@ const ProductsPage: React.FC = () => {
       return;
     }
     
-    // 鐩存帴璺宠浆锛屼笉闇€瑕?OAuth2 鎺堟潈
+    // 直接跳转，不需要 OAuth2 授权
     window.location.href = targetUrl;
   };
   return <div className="min-h-screen pt-24 pb-16">
@@ -288,7 +288,7 @@ const ProductsPage: React.FC = () => {
             <button 
               onClick={() => {
                 if (!activeSubTab || !currentTabConfig?.subTabs) {
-                  // 濡傛灉娌℃湁閫夋嫨宸ュ叿锛屼娇鐢ㄩ粯璁よ涓?
+                  // 如果没有选择工具，使用默认行为
                   window.open('https://toolbox.oran.cn', '_blank');
                   return;
                 }
@@ -304,13 +304,13 @@ const ProductsPage: React.FC = () => {
                   return;
                 }
 
-                // Image Generation 鍜?Video Generation 鐩存帴璺宠浆
+                // Image Generation 和 Video Generation 直接跳转
                 if (subTab.id === 'imageGen' || subTab.id === 'videoGen') {
                   handleToolNavigation(subTab.id);
                 } else if (subTab.url) {
                   window.open(subTab.url, '_blank');
                 } else {
-                  // 榛樿琛屼负
+                  // 默认行为
                   window.open('https://toolbox.oran.cn', '_blank');
                 }
               }}

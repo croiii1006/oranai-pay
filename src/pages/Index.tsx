@@ -8,12 +8,14 @@ import PricingPage from '@/components/PricingPage';
 import LibraryPage from '@/components/LibraryPage';
 import UsagePage from '@/components/UsagePage';
 import Footer from '@/components/Footer';
+import type { PlanId } from '@/lib/pricing';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [libraryFooterVisible, setLibraryFooterVisible] = useState(false);
   const [librarySubTab, setLibrarySubTab] = useState<'video' | 'voice' | 'model'>('video');
+  const [currentPlanId, setCurrentPlanId] = useState<PlanId>('free');
   // 首页 footer 只在滚动到 "Trend & Revenue Forecasting" 模块时显示，初始隐藏
   const [showFooterInSolution, setShowFooterInSolution] = useState(false);
 
@@ -46,7 +48,7 @@ const Index = () => {
       case 'products':
         return <ProductsPage />;
       case 'pricing':
-        return <PricingPage />;
+        return <PricingPage currentPlanId={currentPlanId} setCurrentPlanId={setCurrentPlanId} />;
       case 'usage':
         return <UsagePage />;
       case 'library':
@@ -68,6 +70,7 @@ const Index = () => {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        currentPlanId={currentPlanId}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         isVisible={!isHeroView}

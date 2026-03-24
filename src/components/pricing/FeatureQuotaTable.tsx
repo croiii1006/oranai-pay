@@ -1,6 +1,5 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 /* ----------------------------------------------------------------
    Types & Data
@@ -33,7 +32,7 @@ export const FEATURE_LABELS: Record<keyof FeatureQuota, { zh: string; en: string
   videoGen: { zh: '视频生成', en: 'Video Generation' },
   viralMatch: { zh: '爆款视频匹配', en: 'Viral Match' },
   videoRemix: { zh: '复刻视频', en: 'Video Remix' },
-  tkSolution: { zh: 'TK 解决方案', en: 'TK Solution' },
+  tkSolution: { zh: 'TikTok 解决方案', en: 'TikTok Solution' },
 };
 
 export const PLAN_QUOTAS: Record<string, FeatureQuota> = {
@@ -76,70 +75,52 @@ interface Props {
   highlightDiffFrom?: FeatureQuota | null;
 }
 
-const FeatureQuotaTable: React.FC<Props> = ({ planId, isEnterprise, highlightDiffFrom }) => {
+const FeatureQuotaTable: React.FC<Props> = ({ planId, isEnterprise }) => {
   const { language } = useLanguage();
   const isZh = language === 'zh';
   const quota = PLAN_QUOTAS[planId];
 
   return (
     <div className="space-y-1">
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+      <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
         {isZh ? '可生成内容' : 'What you can generate'}
       </h4>
 
-      <TooltipProvider delayDuration={200}>
-        <ul className="space-y-0.5">
-          {FEATURE_KEYS.map((key) => {
-            const label = FEATURE_LABELS[key];
-            const value = isEnterprise ? -1 : (quota?.[key] ?? 0);
-            const prevValue = highlightDiffFrom?.[key] ?? null;
-            const isGrowth = prevValue !== null && value > prevValue;
-            const isUnlimited = value === -1;
-            const isZero = value === 0;
+      <ul className="space-y-0.5">
+        {FEATURE_KEYS.map((key) => {
+          const label = FEATURE_LABELS[key];
+          const value = isEnterprise ? -1 : (quota?.[key] ?? 0);
+          const isUnlimited = value === -1;
+          const isZero = value === 0;
 
-            return (
-              <Tooltip key={key}>
-                <TooltipTrigger asChild>
-                  <li
-                    className={`flex items-center justify-between py-1.5 px-2 rounded-md text-sm transition-colors duration-200 ${
-                      isGrowth
-                        ? 'bg-foreground/[0.06]'
-                        : 'hover:bg-foreground/[0.04]'
-                    }`}
-                  >
-                    <span className={isZero ? 'text-muted-foreground/50' : ''}>
-                      {isZh ? label.zh : label.en}
-                    </span>
+          return (
+            <li
+              key={key}
+              className="flex items-center justify-between py-1 px-2 rounded-md text-xs"
+            >
+              <span className={isZero ? 'text-muted-foreground/50' : ''}>
+                {isZh ? label.zh : label.en}
+              </span>
 
-                    <span
-                      className={`font-semibold tabular-nums transition-all duration-300 ${
-                        isUnlimited
-                          ? 'text-primary'
-                          : isZero
-                            ? 'text-muted-foreground/40'
-                            : isGrowth
-                              ? 'text-foreground scale-110'
-                              : 'text-foreground'
-                      }`}
-                    >
-                      {isUnlimited
-                        ? (isZh ? '不限' : 'Unlimited')
-                        : value}
-                    </span>
-                  </li>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="text-xs max-w-[200px]">
-                  {isZh
-                    ? '基于平均积分消耗估算'
-                    : 'Estimated based on average credit usage'}
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </ul>
-      </TooltipProvider>
+              <span
+                className={`font-semibold tabular-nums ${
+                  isUnlimited
+                    ? 'text-primary'
+                    : isZero
+                      ? 'text-muted-foreground/40'
+                      : 'text-foreground'
+                }`}
+              >
+                {isUnlimited
+                  ? (isZh ? '不限' : 'Unlimited')
+                  : value}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
 
-      <p className="text-[11px] text-muted-foreground/60 pt-1.5">
+      <p className="text-[11px] text-muted-foreground/60 pt-2">
         {isZh ? '基于每月积分额度估算' : 'Based on your monthly credits'}
       </p>
     </div>
