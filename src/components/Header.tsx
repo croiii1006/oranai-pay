@@ -691,13 +691,14 @@ const Header: React.FC<HeaderProps> = ({
                         {user.nickname || user.username}
                       </div>
                       <div className="pb-3 text-xs text-muted-foreground">{user.email}</div>
-                      <div className="mt-1 flex flex-col items-center gap-1.5">
+                      <div className="mt-1 flex items-center justify-center gap-2">
                         <button
                           type="button"
                           onClick={handlePlanMenuClick}
-                          className="inline-flex min-w-[60px] shrink-0 items-center justify-center rounded-full border border-border/40 bg-muted px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:border-foreground/30 hover:bg-foreground/12 hover:shadow-[0_8px_24px_-16px_rgba(15,23,42,0.5)]"
+                          className="inline-flex min-w-[60px] shrink-0 items-center justify-between gap-2 rounded-full border border-border/40 bg-muted px-2 py-1.5 text-xs font-medium text-foreground transition-all hover:border-foreground/30 hover:bg-foreground/12 hover:shadow-[0_8px_24px_-16px_rgba(15,23,42,0.5)]"
                         >
                           <span>{currentPlanLabel}</span>
+                          <span className="text-muted-foreground" aria-hidden="true">&gt;</span>
                         </button>
                         <Tooltip>
                           <TooltipTrigger asChild>
